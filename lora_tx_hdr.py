@@ -85,7 +85,15 @@ for bw in signal_bandwidth:
             print(f"Elapsed time: {elapsed_time:.6f} seconds")
             print(f"Data rate: {data_rate:.6f} bps")
 
-            time.sleep(1)
+            print("------waiting for receiver------")
+            packet = None
+            packet = rfm9x.receive()
+            while not packet:
+                print("no ack from receiver")
+                packet = rfm9x.receive()
+            print("Packet from rx: ", str(packet, "utf-8"))
+
+            time.sleep(2)
 
             print("--------sending to receiver-------")
             packet_data = f"transmission ended"
