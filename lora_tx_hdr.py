@@ -61,6 +61,7 @@ for bw in signal_bandwidth:
 
             for i in range(num_packets):
                 if i == 0:
+                    print("sending stuf...")
                     time_start = time.perf_counter()
 
                 rfm9x.send(data)
@@ -80,6 +81,6 @@ for bw in signal_bandwidth:
                 "data_rate": data_rate
             })
 
-            print(f"Elapsed time: {elapsed_time:.6f} bps")
+            print(f"Elapsed time: {elapsed_time:.6f} seconds")
             print(f"Data rate: {data_rate:.6f} bps")
             

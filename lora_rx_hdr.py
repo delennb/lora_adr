@@ -54,11 +54,14 @@ for bw in signal_bandwidth:
 
             for i in range(num_packets):
                 if i == 1:
+                    print("receiving...")
                     time_start = time.perf_counter()
                 data = rfm9x.receive()
                 if not data:
                     drop_packets += 1
             time_end = time.perf_counter()
+
+            print("-------receive ended-------")
 
             # Calculate elapsed time
             elapsed_time = time_end - time_start
@@ -75,6 +78,6 @@ for bw in signal_bandwidth:
                 "drop_packets": drop_packets
             })
 
-            print(f"Elapsed time: {elapsed_time:.6f} bps")
+            print(f"Elapsed time: {elapsed_time:.6f} seconds")
             print(f"Data rate: {data_rate:.6f} bps")
             
