@@ -57,11 +57,11 @@ for bw in signal_bandwidth:
                 print("no ack from receiver")
                 packet = rfm9x.receive()
             print("Packet from rx: ", str(packet, "utf-8"))
-            time.sleep(2)
+            time.sleep(5)
 
             for i in range(num_packets):
                 if i == 0:
-                    print("sending stuf...")
+                    print("sending stuff...")
                     time_start = time.perf_counter()
 
                 rfm9x.send_with_ack(data)
