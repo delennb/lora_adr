@@ -32,7 +32,7 @@ print(f"Spreading Factor: {rfm9x.spreading_factor}")
 
 packet_data = f"TX Power: {rfm9x.tx_power} dBm, Bandwidth: {signal_bandwidth} Hz, Coding Rate: {coding_rate}, Spreading Factor: {spreading_factor}"
 packet = bytes(packet_data, "utf-8")
-rfm9x.send(packet)
+rfm9x.send_with_ack(packet)
 
 for bw in signal_bandwidth:
     rfm9x.signal_bandwidth = bw
@@ -50,7 +50,7 @@ for bw in signal_bandwidth:
 
             packet_data = f"TX Power: {rfm9x.tx_power} dBm, Bandwidth: {signal_bandwidth} Hz, Coding Rate: {coding_rate}, Spreading Factor: {spreading_factor}"
             packet = bytes(packet_data, "utf-8")
-            rfm9x.send(packet)
+            rfm9x.send_with_ack(packet)
 
             for i in range(num_packets):
                 if i == 1:
