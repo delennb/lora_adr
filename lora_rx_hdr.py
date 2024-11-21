@@ -57,7 +57,7 @@ for bw in signal_bandwidth:
                     print("receiving...")
                     time_start = time.perf_counter()
                 data = rfm9x.receive()
-                if not data:
+                if not data and not i:
                     drop_packets += 1
             time_end = time.perf_counter()
 
@@ -80,4 +80,12 @@ for bw in signal_bandwidth:
 
             print(f"Elapsed time: {elapsed_time:.6f} seconds")
             print(f"Data rate: {data_rate:.6f} bps")
+
+            print("------waiting for transmitter------")
+            packet = None
+            packet = rfm9x.receive()
+            while not packet:
+                print("no ack from transmitter")
+                packet = rfm9x.receive()
+            print("Packet from tx: ", str(packet, "utf-8"))
             

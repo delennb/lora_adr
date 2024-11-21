@@ -84,4 +84,9 @@ for bw in signal_bandwidth:
 
             print(f"Elapsed time: {elapsed_time:.6f} seconds")
             print(f"Data rate: {data_rate:.6f} bps")
+
+            print("--------sending to receiver-------")
+            packet_data = f"transmission ended"
+            packet = bytes(packet_data, "utf-8")
+            rfm9x.send_with_ack(packet)
             
