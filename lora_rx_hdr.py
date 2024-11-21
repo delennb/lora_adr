@@ -88,4 +88,5 @@ for bw in signal_bandwidth:
                 print("no ack from transmitter")
                 packet = rfm9x.receive()
             print("Packet from tx: ", str(packet, "utf-8"))
+            time.sleep(1)
             

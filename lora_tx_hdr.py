@@ -57,7 +57,7 @@ for bw in signal_bandwidth:
                 print("no ack from receiver")
                 packet = rfm9x.receive()
             print("Packet from rx: ", str(packet, "utf-8"))
-            time.sleep(5)
+            time.sleep(3)
 
             for i in range(num_packets):
                 if i == 0:
