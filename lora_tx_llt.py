@@ -33,10 +33,13 @@ for bw in signal_bandwidth:
         for sf in spreading_factor:
             rfm9x.spreading_factor = sf
 
-            print(f"TX Power: {rfm9x.tx_power} dBm")
-            print(f"Signal Bandwidth: {rfm9x.signal_bandwidth} Hz")
-            print(f"Coding Rate: {rfm9x.coding_rate}")
-            print(f"Spreading Factor: {rfm9x.spreading_factor}")
+            # print(f"TX Power: {rfm9x.tx_power} dBm")
+            # print(f"Signal Bandwidth: {rfm9x.signal_bandwidth} Hz")
+            # print(f"Coding Rate: {rfm9x.coding_rate}")
+            # print(f"Spreading Factor: {rfm9x.spreading_factor}")
+
+            print(f"TX Settings: p {rfm9x.tx_power} dBm, sb {rfm9x.signal_bandwidth} Hz, cr {rfm9x.coding_rate}, sf {rfm9x.spreading_factor}")
+
 
             ack_received = False
             start_time = time.perf_counter()
