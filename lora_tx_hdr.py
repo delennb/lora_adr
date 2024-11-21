@@ -25,7 +25,7 @@ rfm9x = adafruit_rfm9x.RFM9x(spi, CS, RESET, 433.0) # init object for the radio
 # rfm9x.signal_bandwidth = 62500 # high bandwidth => high data rate and low range
 # rfm9x.coding_rate = 6
 # rfm9x.spreading_factor = 8
-# rfm9x.enable_crc = True
+rfm9x.enable_crc = True
 
 print(f"TX Power: {rfm9x.tx_power} dBm")
 print(f"Signal Bandwidth: {rfm9x.signal_bandwidth} Hz")
@@ -84,6 +84,8 @@ for bw in signal_bandwidth:
 
             print(f"Elapsed time: {elapsed_time:.6f} seconds")
             print(f"Data rate: {data_rate:.6f} bps")
+
+            time.sleep(1)
 
             print("--------sending to receiver-------")
             packet_data = f"transmission ended"
