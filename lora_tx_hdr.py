@@ -27,17 +27,17 @@ rfm9x = adafruit_rfm9x.RFM9x(spi, CS, RESET, 433.0) # init object for the radio
 # rfm9x.spreading_factor = 8
 # rfm9x.enable_crc = True
 
-print(f"TX Power: {rfm9x.tx_power} dBm")
-print(f"Signal Bandwidth: {rfm9x.signal_bandwidth} Hz")
-print(f"Coding Rate: {rfm9x.coding_rate}")
-print(f"Spreading Factor: {rfm9x.spreading_factor}")
+# print(f"TX Power: {rfm9x.tx_power} dBm")
+# print(f"Signal Bandwidth: {rfm9x.signal_bandwidth} Hz")
+# print(f"Coding Rate: {rfm9x.coding_rate}")
+# print(f"Spreading Factor: {rfm9x.spreading_factor}")
 
-packet = None
-packet = rfm9x.receive()
-while not packet:
-    print("no ack from receiver")
-    packet = rfm9x.receive()
-print(str(packet, "utf-8"))
+# packet = None
+# packet = rfm9x.receive()
+# while not packet:
+#     print("no ack from receiver")
+#     packet = rfm9x.receive()
+# print(str(packet, "utf-8"))
 
 for bw in signal_bandwidth:
     rfm9x.signal_bandwidth = bw
@@ -80,5 +80,6 @@ for bw in signal_bandwidth:
                 "data_rate": data_rate
             })
 
+            print(f"Elapsed time: {elapsed_time:.6f} bps")
             print(f"Data rate: {data_rate:.6f} bps")
             

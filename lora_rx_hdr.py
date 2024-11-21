@@ -25,14 +25,14 @@ rfm9x = adafruit_rfm9x.RFM9x(spi, CS, RESET, 433.0) # init object for the radio
 # rfm9x.spreading_factor = 8
 # rfm9x.enable_crc = True
 
-print(f"TX Power: {rfm9x.tx_power} dBm")
-print(f"Signal Bandwidth: {rfm9x.signal_bandwidth} Hz")
-print(f"Coding Rate: {rfm9x.coding_rate}")
-print(f"Spreading Factor: {rfm9x.spreading_factor}")
+# print(f"TX Power: {rfm9x.tx_power} dBm")
+# print(f"Signal Bandwidth: {rfm9x.signal_bandwidth} Hz")
+# print(f"Coding Rate: {rfm9x.coding_rate}")
+# print(f"Spreading Factor: {rfm9x.spreading_factor}")
 
-packet_data = f"TX Power: {rfm9x.tx_power} dBm, Bandwidth: {signal_bandwidth} Hz, Coding Rate: {coding_rate}, Spreading Factor: {spreading_factor}"
-packet = bytes(packet_data, "utf-8")
-rfm9x.send(packet)
+# packet_data = f"TX Power: {rfm9x.tx_power} dBm, Bandwidth: {signal_bandwidth} Hz, Coding Rate: {coding_rate}, Spreading Factor: {spreading_factor}"
+# packet = bytes(packet_data, "utf-8")
+# rfm9x.send(packet)
 
 for bw in signal_bandwidth:
     rfm9x.signal_bandwidth = bw
@@ -40,6 +40,8 @@ for bw in signal_bandwidth:
         rfm9x.coding_rate = cr
         for sf in spreading_factor:
             rfm9x.spreading_factor = sf
+
+            drop_packets = 0
 
             print(f"TX Power: {rfm9x.tx_power} dBm")
             print(f"Signal Bandwidth: {rfm9x.signal_bandwidth} Hz")
@@ -55,22 +57,24 @@ for bw in signal_bandwidth:
                     time_start = time.perf_counter()
                 data = rfm9x.receive()
                 while not data:
-                    data = rfm9x.receive()
+                    drop_packets += 1
             time_end = time.perf_counter()
 
             # Calculate elapsed time
             elapsed_time = time_end - time_start
-            data_rate = packet_size * 8 * (num_packets-1) / elapsed_time
+            data_rate = packet_size * 8 * (num_packets-1-drop_packets) / elapsed_time
 
             timing_data.append({
                 "tx_power": rfm9x.tx_power,
                 "signal_bandwidth": rfm9x.signal_bandwidth,
                 "coding_rate": rfm9x.coding_rate,
                 "spreading_factor": rfm9x.spreading_factor,
-                "num_packets": num_packets-1,
+                "num_packets": num_packets-1-drop_packets,
                 "elapsed_time": elapsed_time,
-                "data_rate": data_rate
+                "data_rate": data_rate,
+                "drop_packets": drop_packets
             })
 
+            print(f"Elapsed time: {elapsed_time:.6f} bps")
             print(f"Data rate: {data_rate:.6f} bps")
             
