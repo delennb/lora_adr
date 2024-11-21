@@ -10,7 +10,6 @@ signal_bandwidth = [125000, 250000, 500000]
 spreading_factor = [7, 8, 9, 10, 11, 12]
 num_packets = 100
 packet_size = 252
-data = os.urandom(packet_size)
 timing_data = []
 
 # Setup
