@@ -64,7 +64,7 @@ for bw in signal_bandwidth:
                     print("sending stuf...")
                     time_start = time.perf_counter()
 
-                rfm9x.send(data)
+                rfm9x.send_with_ack(data)
                 # print("data sent")
             time_end = time.perf_counter()
             # Calculate elapsed time
