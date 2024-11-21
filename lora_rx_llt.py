@@ -36,11 +36,11 @@ for bw in signal_bandwidth:
             # print(f"Coding Rate: {rfm9x.coding_rate}")
             # print(f"Spreading Factor: {rfm9x.spreading_factor}")
 
-            print(f"TX Settings: p {rfm9x.tx_power} dBm, sb {rfm9x.signal_bandwidth} Hz, cr {rfm9x.coding_rate}, sf {rfm9x.spreading_factor}")
+            print(f"RX Settings: p {rfm9x.tx_power} dBm, sb {rfm9x.signal_bandwidth} Hz, cr {rfm9x.coding_rate}, sf {rfm9x.spreading_factor}")
 
 
             start_time = time.perf_counter()
-            timeout = 5  # Timeout in seconds
+            timeout = 10  # Timeout in seconds
             ack_sent = False
             drop_packets = 0
             packet_received = False

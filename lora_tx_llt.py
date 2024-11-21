@@ -43,7 +43,7 @@ for bw in signal_bandwidth:
 
             ack_received = False
             start_time = time.perf_counter()
-            timeout = 5  # Timeout in seconds
+            timeout = 10  # Timeout in seconds
             packet_sent = False
 
             while not packet_sent:
