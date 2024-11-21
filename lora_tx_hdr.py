@@ -93,8 +93,8 @@ for bw in signal_bandwidth:
                 packet = rfm9x.receive()
             print("Packet from rx: ", str(packet, "utf-8"))
 
-            print("transmitter waiting for 5 seconds")
-            time.sleep(5)
+            print("transmitter waiting for 10 seconds")
+            time.sleep(10)
 
             print("--------sending to receiver-------")
             packet_data = f"transmission ended"
