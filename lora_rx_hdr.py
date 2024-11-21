@@ -56,7 +56,7 @@ for bw in signal_bandwidth:
                 if i == 1:
                     time_start = time.perf_counter()
                 data = rfm9x.receive()
-                while not data:
+                if not data:
                     drop_packets += 1
             time_end = time.perf_counter()
 
