@@ -1,4 +1,4 @@
-# Imports
+# RX Code
 import time
 import busio
 import board
@@ -7,44 +7,40 @@ from digitalio import DigitalInOut
 
 # Parameters
 num_packets = 100
-results = []  # List to store results for each settings loop
+frequency = 433.0  # MHz
+max_loops = 50  # Maximum number of settings loops to process
 
 # Setup
-CS = DigitalInOut(board.CE1)  # init CS pin for SPI
-RESET = DigitalInOut(board.D25)  # init RESET pin for the RFM9x module
-spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)  # init SPI
-rfm9x = adafruit_rfm9x.RFM9x(spi, CS, RESET, 433.0)  # init object for the radio
+CS = DigitalInOut(board.CE1)
+RESET = DigitalInOut(board.D25)
+spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
+rfm9x = adafruit_rfm9x.RFM9x(spi, CS, RESET, frequency)
 
-while True:  # Loop to process all settings
+loops_completed = 0
+
+while loops_completed < max_loops:
     print("Waiting for sync signal from transmitter...")
     sync_packet = None
     while not sync_packet:
-        sync_packet = rfm9x.receive(timeout=15.0)  # Longer timeout
+        sync_packet = rfm9x.receive(timeout=15.0)
         if sync_packet:
             try:
                 sync_content = sync_packet.decode("utf-8")
-                if sync_content == "END":
-                    print("Termination signal received. Exiting.")
-                    print("\n=== Final Results ===")
-                    for i, result in enumerate(results, start=1):
-                        print(f"Settings Loop {i}:")
-                        print(f"  BW={result['bandwidth']} Hz, CR={result['coding_rate']}, SF={result['spreading_factor']}")
-                        print(f"  Packets Dropped: {result['packets_dropped']}/{num_packets}")
-                        print(f"  Time Elapsed: {result['elapsed_time']} seconds")
-                        print(f"  Data Rate: {result['data_rate']} bps\n")
-                    exit(0)  # Exit the program
                 if sync_content.startswith("SYNC"):
                     _, bw, cr, sf = sync_content.split("|")
                     rfm9x.signal_bandwidth = int(bw)
                     rfm9x.coding_rate = int(cr)
                     rfm9x.spreading_factor = int(sf)
                     print(f"RX Settings: Power {rfm9x.tx_power} dBm, Bandwidth {bw} Hz, Coding Rate {cr}, Spreading Factor {sf}")
-                    
+
                     # Send acknowledgment to TX
                     ack_packet = "READY".encode("utf-8")
                     rfm9x.send(ack_packet)
                     print("Acknowledgment sent to transmitter.")
                     break
+                elif sync_content == "TERMINATE":
+                    print("Termination signal received. Exiting...")
+                    exit(0)
             except Exception as e:
                 print(f"Failed to process sync packet: {e}")
         else:
@@ -52,31 +48,26 @@ while True:  # Loop to process all settings
 
     # Receive data packets
     print("Waiting for data packets...")
-    drop_packets = 0
+    dropped_packets = 0
+    received_packets = 0
     start_time = time.time()
     for i in range(num_packets):
-        packet = rfm9x.receive(timeout=5.0)  # 5-second timeout per packet
+        packet = rfm9x.receive(timeout=5.0)
         if not packet:
             print(f"No packet received for {i+1}/{num_packets}.")
-            drop_packets += 1
+            dropped_packets += 1
         else:
+            received_packets += 1
             print(f"Received packet {i+1}/{num_packets}: {packet.decode('utf-8')}")
 
-    elapsed_time = time.time() - start_time
-    data_rate = (num_packets - drop_packets) * 8 * len("Packet") / elapsed_time  # Simplified for example
-
-    # Save results
-    results.append({
-        "bandwidth": bw,
-        "coding_rate": cr,
-        "spreading_factor": sf,
-        "packets_dropped": drop_packets,
-        "elapsed_time": elapsed_time,
-        "data_rate": data_rate
-    })
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    data_rate = (received_packets * len(packet.decode('utf-8'))) / elapsed_time if received_packets > 0 else 0
 
     print(f"Completed loop with settings: BW={bw}, CR={cr}, SF={sf}")
-    print(f"Total packets dropped: {drop_packets}/{num_packets}")
-    print(f"Time elapsed: {elapsed_time:.2f} seconds")
-    print(f"Data rate: {data_rate:.2f} bps")
+    print(f"Total packets dropped: {dropped_packets}/{num_packets}")
+    print(f"Elapsed time: {elapsed_time:.2f} seconds")
+    print(f"Data rate: {data_rate:.2f} bytes/sec\n")
+    loops_completed += 1
 
+print("Maximum number of settings loops reached. Exiting...")
