@@ -14,7 +14,7 @@ def lora_datarate(bandwidth, spreading_factor, coding_rate):
     """
 
     coding_rate = coding_rate - 4
-    return spreading_factor * ((4/(4+coding_rate))/((2**spreading_factor)/bandwidth))
+    return spreading_factor * ((4/(4+coding_rate))/((2**spreading_factor)/(bandwidth/1000)))
     # return ((bandwidth / (2**spreading_factor)) * coding_rate)/1000
 
 bw_list = [125000, 250000, 500000]  # Bandwidth in Hz
