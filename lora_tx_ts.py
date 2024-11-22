@@ -10,7 +10,7 @@ coding_rate = [5, 6, 7, 8]
 signal_bandwidth = [125000, 250000, 500000]
 spreading_factor = [7, 8, 9, 10, 11, 12]
 num_packets = 100
-packet_size = 252
+packet_size = 252  # Total maximum size allowed by RFM9x
 
 # Setup LoRa
 CS = DigitalInOut(board.CE1)
@@ -23,7 +23,9 @@ rfm9x.tx_power = 13  # Default TX Power
 # Function to create a packet with a timestamp
 def create_packet():
     timestamp = int(time.time() * 1000)  # Current timestamp in milliseconds
-    payload = os.urandom(packet_size - len(str(timestamp).encode()))
+    # Calculate maximum payload size
+    max_payload_size = 252 - len(f"{timestamp}|".encode())
+    payload = os.urandom(max_payload_size)  # Generate payload of the remaining size
     packet_data = f"{timestamp}|".encode() + payload
     return packet_data, timestamp
 
