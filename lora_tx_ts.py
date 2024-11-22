@@ -58,7 +58,7 @@ for bw in signal_bandwidth:
                 print(f"Sending packet {i+1}/{num_packets} with timestamp {timestamp}")
                 rfm9x.send(packet)  # No ACK in this method to simplify timing
                 
-                time.sleep(5)  # Brief delay between packets
+                time.sleep(10)  # Brief delay between packets
 
             print("Finished sending packets for this configuration.")
             time.sleep(2)  # Delay before switching settings
