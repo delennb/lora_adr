@@ -1,11 +1,9 @@
-# Global Sync State Method
-
 # Imports
 import time
 import busio
 import board
 import adafruit_rfm9x
-from digitalio import DigitalInOut, Direction
+from digitalio import DigitalInOut
 
 # Parameters
 num_packets = 100
@@ -20,10 +18,13 @@ while True:  # Loop to process all settings
     print("Waiting for sync signal from transmitter...")
     sync_packet = None
     while not sync_packet:
-        sync_packet = rfm9x.receive(timeout=5.0)
+        sync_packet = rfm9x.receive(timeout=15.0)  # Longer timeout
         if sync_packet:
             try:
                 sync_content = sync_packet.decode("utf-8")
+                if sync_content == "END":
+                    print("Termination signal received. Exiting.")
+                    exit(0)  # Exit the program
                 if sync_content.startswith("SYNC"):
                     _, bw, cr, sf = sync_content.split("|")
                     rfm9x.signal_bandwidth = int(bw)
@@ -40,7 +41,6 @@ while True:  # Loop to process all settings
                 print(f"Failed to process sync packet: {e}")
         else:
             print("No sync signal received within timeout. Retrying...")
-            continue
 
     # Receive data packets
     print("Waiting for data packets...")
@@ -55,10 +55,4 @@ while True:  # Loop to process all settings
 
     print(f"Completed loop with settings: BW={bw}, CR={cr}, SF={sf}")
     print(f"Total packets dropped: {drop_packets}/{num_packets}")
-    
-    # Check if there's another `SYNC` packet
-    print("Waiting for next settings loop or termination signal...")
-    next_sync_packet = rfm9x.receive(timeout=10.0)
-    if not next_sync_packet:
-        print("No further sync packets received. Exiting.")
-        break
+
