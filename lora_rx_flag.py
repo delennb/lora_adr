@@ -62,12 +62,12 @@ while loops_completed < max_loops:
 
     end_time = time.time()
     elapsed_time = end_time - start_time
-    data_rate = (received_packets * len(packet.decode('utf-8'))) / elapsed_time if received_packets > 0 else 0
+    data_rate = (received_packets * len(packet.decode('utf-8')) * 8) / elapsed_time / 1000 if received_packets > 0 else 0
 
     print(f"Completed loop with settings: BW={bw}, CR={cr}, SF={sf}")
     print(f"Total packets dropped: {dropped_packets}/{num_packets}")
     print(f"Elapsed time: {elapsed_time:.2f} seconds")
-    print(f"Data rate: {data_rate:.2f} bytes/sec\n")
+    print(f"Data rate: {data_rate:.2f} kbps\n")
     loops_completed += 1
 
 print("Maximum number of settings loops reached. Exiting...")
