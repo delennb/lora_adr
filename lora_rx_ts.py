@@ -61,7 +61,7 @@ for bw in signal_bandwidth:
 
             for i in range(num_packets):
                 print(f"Waiting for packet {i+1}/{num_packets}...")
-                packet = rfm9x.receive(timeout=5)  # Wait for packet with a 5-second timeout
+                packet = rfm9x.receive(timeout=10.0)  # Wait for packet with a 5-second timeout
 
                 if not packet:
                     print("No packet received within timeout.")
