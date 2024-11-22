@@ -7,6 +7,7 @@ from digitalio import DigitalInOut
 
 # Parameters
 num_packets = 100
+results = []  # List to store results for each settings loop
 
 # Setup
 CS = DigitalInOut(board.CE1)  # init CS pin for SPI
@@ -24,6 +25,13 @@ while True:  # Loop to process all settings
                 sync_content = sync_packet.decode("utf-8")
                 if sync_content == "END":
                     print("Termination signal received. Exiting.")
+                    print("\n=== Final Results ===")
+                    for i, result in enumerate(results, start=1):
+                        print(f"Settings Loop {i}:")
+                        print(f"  BW={result['bandwidth']} Hz, CR={result['coding_rate']}, SF={result['spreading_factor']}")
+                        print(f"  Packets Dropped: {result['packets_dropped']}/{num_packets}")
+                        print(f"  Time Elapsed: {result['elapsed_time']} seconds")
+                        print(f"  Data Rate: {result['data_rate']} bps\n")
                     exit(0)  # Exit the program
                 if sync_content.startswith("SYNC"):
                     _, bw, cr, sf = sync_content.split("|")
@@ -45,6 +53,7 @@ while True:  # Loop to process all settings
     # Receive data packets
     print("Waiting for data packets...")
     drop_packets = 0
+    start_time = time.time()
     for i in range(num_packets):
         packet = rfm9x.receive(timeout=5.0)  # 5-second timeout per packet
         if not packet:
@@ -53,6 +62,21 @@ while True:  # Loop to process all settings
         else:
             print(f"Received packet {i+1}/{num_packets}: {packet.decode('utf-8')}")
 
+    elapsed_time = time.time() - start_time
+    data_rate = (num_packets - drop_packets) * 8 * len("Packet") / elapsed_time  # Simplified for example
+
+    # Save results
+    results.append({
+        "bandwidth": bw,
+        "coding_rate": cr,
+        "spreading_factor": sf,
+        "packets_dropped": drop_packets,
+        "elapsed_time": elapsed_time,
+        "data_rate": data_rate
+    })
+
     print(f"Completed loop with settings: BW={bw}, CR={cr}, SF={sf}")
     print(f"Total packets dropped: {drop_packets}/{num_packets}")
+    print(f"Time elapsed: {elapsed_time:.2f} seconds")
+    print(f"Data rate: {data_rate:.2f} bps")
 
