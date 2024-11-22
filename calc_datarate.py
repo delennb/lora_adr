@@ -24,6 +24,8 @@ cr_list = [5, 6, 7, 8]             # Coding Rate (4/5, 4/6, 4/7, 4/8)
 # Store the results
 results = []
 
+pd.set_option('display.max_rows', None)
+
 # Loop over all combinations of BW, SF, and CR
 for bw in bw_list:
     for sf in sf_list:
