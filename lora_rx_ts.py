@@ -42,6 +42,19 @@ for bw in signal_bandwidth:
 
             print(f"RX Settings: Power {rfm9x.tx_power} dBm, Bandwidth {bw} Hz, Coding Rate {cr}, Spreading Factor {sf}")
 
+            # --- Synchronization Step ---
+            print("Waiting for sync signal from transmitter...")
+            sync_signal = None
+            while not sync_signal:
+                sync_signal = rfm9x.receive(timeout=5.0)
+            if sync_signal and sync_signal.decode() == "SYNC":
+                print("Sync signal received, sending READY...")
+                rfm9x.send_with_ack("READY".encode())
+            else:
+                print("Sync signal not received, skipping this configuration.")
+                continue
+            # ----------------------------
+
             drop_packets = 0
             valid_packets = 0
             start_time = None

@@ -39,6 +39,19 @@ for bw in signal_bandwidth:
 
             print(f"TX Settings: Power {rfm9x.tx_power} dBm, Bandwidth {bw} Hz, Coding Rate {cr}, Spreading Factor {sf}")
 
+            # --- Synchronization Step ---
+            rfm9x.send_with_ack("SYNC".encode())
+            print("Sync signal sent, waiting for receiver acknowledgment...")
+            ack = None
+            while not ack:
+                ack = rfm9x.receive(timeout=5.0)
+            if ack and ack.decode() == "READY":
+                print("Receiver ready, starting transmission.")
+            else:
+                print("Receiver not ready, aborting!")
+                continue
+            # ---------------------------
+
             # Transmit packets
             for i in range(num_packets):
                 packet, timestamp = create_packet()
