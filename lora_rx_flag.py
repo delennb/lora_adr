@@ -15,7 +15,7 @@ output_file = 'rf_results.csv'
 # Function to print the results in a table
 def print_results_table(output_file):
     print("\nSummary of all loops:")
-    print(f"{'Loop':<5}{'Bandwidth (Hz)':<15}{'Coding Rate':<12}{'Spreading Factor':<16}{'Dropped Packets':<15}{'Received Packets':<17}{'Elapsed Time (s):<20'}{'Data Rate (kbps)':<15}")
+    print(f"{'Loop':<5}{'Bandwidth (Hz)':<15}{'Coding Rate':<12}{'SF':<16}{'Dropped Packets':<15}{'Received Packets':<17}{'Elapsed Time (s)':<20}{'Data Rate (kbps)':<15}")
     with open(output_file, 'r') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
