@@ -18,7 +18,7 @@ def print_results_table(output_file):
     print(f"{'Loop':<5}{'Bandwidth (Hz)':<15}{'Coding Rate':<12}{'Spreading Factor':<16}{'Dropped Packets':<15}{'Received Packets':<17}{'Elapsed Time (s):<20'}{'Data Rate (kbps)':<15}")
     with open(output_file, 'r') as csvfile:
         reader = csv.DictReader(csvfile)
-        for row in header:
+        for row in reader:
             print(f"{row['Loop']:<5}{row['Bandwidth (Hz)']:<15}{row['Coding Rate']:<12}{row['Spreading Factor']:<16}{row['Dropped Packets']:<15}{row['Received Packets']:<17}{row['Elapsed Time (s)']:<20}{row['Data Rate (kbps)']:<15}")
 
 
