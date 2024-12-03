@@ -4,17 +4,35 @@ import busio
 import board
 import adafruit_rfm9x
 from digitalio import DigitalInOut
+import csv
 
 # Parameters
 num_packets = 100
 frequency = 433.0  # MHz
-max_loops = 50  # Maximum number of settings loops to process
+max_loops = 80  # Maximum number of settings loops to process
+output_file = 'rf_results.csv'
+
+# Function to print the results in a table
+def print_results_table(output_file):
+    print("\nSummary of all loops:")
+    print(f"{'Loop':<5}{'Bandwidth (Hz)':<15}{'Coding Rate':<12}{'Spreading Factor':<16}{'Dropped Packets':<15}{'Received Packets':<17}{'Elapsed Time (s):<20'}{'Data Rate (kbps)':<15}")
+    with open(output_file, 'r') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in header:
+            print(f"{row['Loop']:<5}{row['Bandwidth (Hz)']:<15}{row['Coding Rate']:<12}{row['Spreading Factor']:<16}{row['Dropped Packets']:<15}{row['Received Packets']:<17}{row['Elapsed Time (s)']:<20}{row['Data Rate (kbps)']:<15}")
+
 
 # Setup
 CS = DigitalInOut(board.CE1)
 RESET = DigitalInOut(board.D25)
 spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
 rfm9x = adafruit_rfm9x.RFM9x(spi, CS, RESET, frequency)
+
+# Open the results CSV file to write results header
+with open(output_file, 'w', newline='') as csvfile:
+    fieldnames = ['Loop', 'Bandwidth (Hz)', 'Coding Rate', 'Spreading Factor', 'Dropped Packets', 'Received Packets', 'Elapsed Time (s)', 'Data Rate (kbps)']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    writer.writeheader()
 
 loops_completed = 0
 
@@ -40,6 +58,7 @@ while loops_completed < max_loops:
                     break
                 elif sync_content == "TERMINATE":
                     print("Termination signal received. Exiting...")
+                    print_results_table(output_file)
                     exit(0)
             except Exception as e:
                 print(f"Failed to process sync packet: {e}")
@@ -64,10 +83,32 @@ while loops_completed < max_loops:
     elapsed_time = end_time - start_time
     data_rate = (received_packets * len(packet.decode('utf-8')) * 8) / elapsed_time / 1000 if received_packets > 0 else 0
 
+    # Store results in the CSV file
+    with open(output_file, 'a', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=['Loop', 'Bandwidth (Hz)', 'Coding Rate', 'Spreading Factor', 'Dropped Packets', 'Received Packets', 'Elapsed Time (s)', 'Data Rate (kbps)'])
+        writer.writerow({
+            'Loop': loops_completed + 1,
+            'Bandwidth (Hz)': bw,
+            'Coding Rate': cr,
+            'Spreading Factor': sf,
+            'Dropped Packets': dropped_packets,
+            'Received Packets': received_packets,
+            'Elapsed Time (s)': f"{elapsed_time:.2f}",
+            'Data Rate (kbps)':f"{data_rate:.2f}",
+        })
+
     print(f"Completed loop with settings: BW={bw}, CR={cr}, SF={sf}")
     print(f"Total packets dropped: {dropped_packets}/{num_packets}")
     print(f"Elapsed time: {elapsed_time:.2f} seconds")
     print(f"Data rate: {data_rate:.2f} kbps\n")
     loops_completed += 1
+
+# Print a table of all results
+print("\nSummary of all loops:")
+print(f"{'Loop':<5}{'Bandwidth (Hz)':<15}{'Coding Rate':<12}{'Spreading Factor':<16}{'Dropped Packets':<15}{'Received Packets':<17}{'Elapsed Time (s):<20'}{'Data Rate (kbps)':<15}")
+with open(output_file, 'r') as csvfile:
+    reader = csv.DictReader(csvfile)
+    for row in header:
+        print(f"{row['Loop']:<5}{row['Bandwidth (Hz)']:<15}{row['Coding Rate']:<12}{row['Spreading Factor']:<16}{row['Dropped Packets']:<15}{row['Received Packets']:<17}{row['Elapsed Time (s)']:<20}{row['Data Rate (kbps)']:<15}")
 
 print("Maximum number of settings loops reached. Exiting...")
