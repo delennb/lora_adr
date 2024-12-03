@@ -11,9 +11,9 @@ frequency = 433.0  # MHz
 tx_power = 13  # Transmission power
 
 # Settings combinations
-bandwidths = [125000, 250000]  # Hz
+bandwidths = [125000, 250000, 500000]  # Hz
 coding_rates = [5, 6, 7, 8]
-spreading_factors = [7, 8, 9, 10, 11, 12]
+spreading_factors = [7, 8] #, 9, 10, 11, 12]
 
 # Setup
 CS = DigitalInOut(board.CE1)
@@ -22,12 +22,19 @@ spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
 rfm9x = adafruit_rfm9x.RFM9x(spi, CS, RESET, frequency)
 rfm9x.tx_power = tx_power
 
+old_bw = []
+old_cr = []
+old_sf = []
+
 for bw in bandwidths:
     for cr in coding_rates:
         for sf in spreading_factors:
-            rfm9x.signal_bandwidth = bw
-            rfm9x.coding_rate = cr
-            rfm9x.spreading_factor = sf
+            old_bw = rfm9x.signal_bandwidth
+            old_cr = rfm9x.coding_rate
+            old_sf = rfm9x.spreading_factor
+            # rfm9x.signal_bandwidth = bw
+            # rfm9x.coding_rate = cr
+            # rfm9x.spreading_factor = sf
 
             print(f"TX Settings: Power {rfm9x.tx_power} dBm, Bandwidth {bw} Hz, Coding Rate {cr}, Spreading Factor {sf}")
 
@@ -35,6 +42,10 @@ for bw in bandwidths:
             sync_packet = f"SYNC|{bw}|{cr}|{sf}".encode("utf-8")
             rfm9x.send(sync_packet)
             print("Sync packet sent, waiting for receiver acknowledgment...")
+
+            rfm9x.signal_bandwidth = bw
+            rfm9x.coding_rate = cr
+            rfm9x.spreading_factor = sf
 
             ack_received = False
             for _ in range(5):  # Retry acknowledgment
@@ -44,8 +55,15 @@ for bw in bandwidths:
                     ack_received = True
                     break
                 else:
-                    print("No acknowledgment from receiver. Retrying...")
-                    time.sleep(1.0)
+                    print("No acknowledgment from receiver. Retrying sync...")
+                    time.sleep(0.5)
+                    rfm9x.signal_bandwidth = old_bw
+                    rfm9x.coding_rate = old_cr
+                    rfm9x.spreading_factor
+                    rfm9x.send(sync_packet)
+                    rfm9x.signal_bandwidth = bw
+                    rfm9x.coding_rate = cr
+                    rfm9x.spreading_factor = sf
 
             if not ack_received:
                 print("No acknowledgment from receiver. Moving to next settings.")
@@ -57,7 +75,7 @@ for bw in bandwidths:
                 packet = f"Packet {i+1}/{num_packets}|TS:{int(time.time() * 1000)}".encode("utf-8")
                 rfm9x.send(packet)
                 print(f"Sent packet {i+1}/{num_packets} with timestamp {int(time.time() * 1000)}")
-                time.sleep(0.1)  # Adjust delay if needed
+                time.sleep(0.01)  # Adjust delay if needed
 
             end_time = time.time()
             elapsed_time = end_time - start_time
