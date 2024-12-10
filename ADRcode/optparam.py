@@ -74,32 +74,32 @@ def mobile_adr(sf_last: int,
     
     return sf, tp
 
-# Example usage
-def example_usage():
-    # Example parameters
-    sf_last = 7
-    bandwidth = [125, 250, 500]
-    current_tp = 10
-    margin_db = 5
-    M = 10
-    velocity = 5
-    ack_enabled = True
-    last_mul_packets_snr = [-5, -3, -4, -6, -2]
-    last_mul_packets_rssi = [-110, -105, -108, -112, -106]
+# # Example usage
+# def example_usage():
+#     # Example parameters
+#     sf_last = 7
+#     bandwidth = [125, 250, 500]
+#     current_tp = 10
+#     margin_db = 5
+#     M = 10
+#     velocity = 5
+#     ack_enabled = True
+#     last_mul_packets_snr = [-5, -3, -4, -6, -2]
+#     last_mul_packets_rssi = [-110, -105, -108, -112, -106]
     
-    sf, tp = mobile_adr(
-        sf_last=sf_last,
-        bandwidth=bandwidth,
-        current_tp=current_tp,
-        margin_db=margin_db,
-        M=M,
-        velocity=velocity,
-        ack_enabled=ack_enabled,
-        last_mul_packets_snr=last_mul_packets_snr,
-        last_mul_packets_rssi=last_mul_packets_rssi
-    )
+#     sf, tp = mobile_adr(
+#         sf_last=sf_last,
+#         bandwidth=bandwidth,
+#         current_tp=current_tp,
+#         margin_db=margin_db,
+#         M=M,
+#         velocity=velocity,
+#         ack_enabled=ack_enabled,
+#         last_mul_packets_snr=last_mul_packets_snr,
+#         last_mul_packets_rssi=last_mul_packets_rssi
+#     )
     
-    print(f"Selected SF: {sf}, TP: {tp}")
+#     print(f"Selected SF: {sf}, TP: {tp}")
 
-if __name__ == "__main__":
-    example_usage()
+# if __name__ == "__main__":
+#     example_usage()
