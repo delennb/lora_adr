@@ -89,7 +89,7 @@ class LoRaTransmitter:
         try:
             # Ensure sync before starting
             if not self.sync_with_receiver():
-                self.logger.error("Mission aborted due to sync failure")
+                self.logger.error("aborted due to sync failure")
                 return
             
             # Mission start
@@ -117,16 +117,16 @@ class LoRaTransmitter:
                 
                 time.sleep(packet_interval)
             
-            # Mission complete - send termination signal
+            # complete - send termination signal
             terminate_signal = "TERMINATE".encode("utf-8")
             for _ in range(3):
                 self.adr_manager.rfm9x.send(terminate_signal)
                 time.sleep(0.5)
             
-            self.logger.info("Mission completed")
+            self.logger.info("completed")
         
         except Exception as e:
-            self.logger.error(f"Mission error: {e}")
+            self.logger.error(f"error: {e}")
         finally:
             self.logger.info(f"Total packets sent: {self.packets_sent}")
 
@@ -138,7 +138,7 @@ def main():
         initial_cr=5,
         initial_bw=125000,
         initial_tx_power=13,
-        mission_duration=3600.0,  # 1-hour mission
+        mission_duration=3600.0,  # 1 hour ---- test, will need to change this
         velocity=5.0  # Example velocity
     )
     transmitter.run_mission()

@@ -145,10 +145,10 @@ class LoRaReceiver:
                     self.logger.warning("No packet received in timeout window")
             
             except Exception as e:
-                self.logger.error(f"Mission error: {e}")
+                self.logger.error(f"error: {e}")
         
         # Mission summary
-        self.logger.info(f"Mission complete")
+        self.logger.info(f"complete")
         self.logger.info(f"Total packets received: {self.total_packets_received}")
         self.logger.info(f"Dropped packets: {self.dropped_packets}")
 
